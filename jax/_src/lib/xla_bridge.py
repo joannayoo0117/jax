@@ -330,6 +330,9 @@ def backends():
     default_priority = -1000
     for platform, priority in platforms_and_priorites:
       try:
+        # TODO(b/237099479): refactor so that PJRT plugins are only loaded once.
+        if hasattr(xla_client, "maybe_load_pjrt_plugin"):
+          xla_client.maybe_load_pjrt_plugin(platform)
         backend = _init_backend(platform)
         _backends[platform] = backend
 
