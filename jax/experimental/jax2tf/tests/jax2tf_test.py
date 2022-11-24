@@ -1386,6 +1386,9 @@ class XlaCallModuleTest(tf_test_util.JaxToTfTestCase):
     def func_jax(x, y):
       return jnp.sin(x) + jnp.cos(y)
 
+    func_tf = jax2tf.convert(
+        func_jax, polymorphic_shapes="(b,...)", with_gradient=True)
+
     outer_scope = "output_a"
     g = tf.Graph()
     with g.as_default() as g:
@@ -1393,7 +1396,6 @@ class XlaCallModuleTest(tf_test_util.JaxToTfTestCase):
         x = tf.Variable(
             tf.zeros(shape=(1, 5), dtype=tf.dtypes.float32), name="x")
         y = tf.compat.v1.placeholder(tf.dtypes.float32, (None, 5), "y")
-        func_tf = jax2tf.convert(func_jax, polymorphic_shapes="(b,...)")
         _ = func_tf(x, y)
     assertAllOperationStartWith(g, outer_scope)
 

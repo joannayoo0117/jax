@@ -518,6 +518,7 @@ def make_custom_gradient_fn_tf(
 
     # TODO: enable higher-order gradients
     with tf.name_scope("jax2tf_vjp"):
+      logging.debug("higher-order gradients: scope = %s", tf.get_current_name_scope())
       in_cts_flat = convert(
           fun_vjp_jax,
           with_gradient=False,
@@ -1047,15 +1048,12 @@ class TensorFlowTrace(core.Trace):
     # transformations, which aren't allowed in `name_scope`.
     scope = '/'.join([s.name for s in current_name_stack.stack])  # type: ignore[union-attr]
 
-    if tf.get_current_name_scope():
-      scope = f"{tf.get_current_name_scope()}/{scope}"
-
-    # We need to add a '/' to the name stack string to force `tf.name_scope`
-    # to interpret it as an absolute scope, not a relative scope.
-    if not scope.endswith("/"):
-      scope = scope + "/"
+    # We need strip the last '/' to enable tf.name_scope relative scope.
+    if scope.endswith("/"):
+      scope = scope.rstrip("/")
 
     with tf.name_scope(_sanitize_scope_name(scope)):
+      logging.debug("scope = %s, primitive = %s", tf.get_current_name_scope(), primitive)
       if _thread_local_state.include_xla_op_metadata:
         op_metadata = xla.make_op_metadata(primitive, params,
                                            name_stack=current_name_stack,
