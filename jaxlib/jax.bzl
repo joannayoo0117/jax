@@ -169,6 +169,7 @@ def jax_test(
             test_tags += ["manual"]
         if backend == "gpu":
             test_tags += tf_cuda_tests_tags()
+            deps += ["//jaxlib/cuda:cuda_gpu_support"]
         native.py_test(
             name = name + "_" + backend,
             srcs = srcs,
