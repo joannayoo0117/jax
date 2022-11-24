@@ -6,6 +6,13 @@ Best viewed [here](https://jax.readthedocs.io/en/latest/changelog.html).
 Remember to align the itemized text with the first line of an item within a list.
 -->
 
+## Next jax
+* [GitHub commits](https://github.com/google/jax/compare/jax-v0.4.0...main).
+* Changes
+  * The jax2tf.call_tf function now takes an option for the name of the TF
+    device to use for TF lowering. If not given, uses the first TF device of
+    the same platform as used by the embedding JAX computation.
+
 ## jax 0.4.0
 * Changes
   * We introduce `jax.Array` which is a unified array type that subsumes
